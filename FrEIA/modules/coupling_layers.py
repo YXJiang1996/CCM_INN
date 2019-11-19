@@ -10,7 +10,7 @@ class rev_layer(nn.Module):
     '''General reversible layer modeled after the lifting scheme. Uses some
     non-reversible transformation F, but splits the channels up to make it
     revesible (see lifting scheme). F itself does not have to be revesible. See
-    F_* classes above for examples.'''
+    F_* classes above for km_impl.'''
 
     def __init__(self, dims_in, F_class=F_conv, F_args={}):
         super(rev_layer, self).__init__()
@@ -47,7 +47,7 @@ class rev_multiplicative_layer(nn.Module):
     layer with a multiplicative term presented in the real-NVP paper is much
     more general. This class uses some non-reversible transformation F, but
     splits the channels up to make it revesible (see lifting scheme). F itself
-    does not have to be revesible. See F_* classes above for examples.'''
+    does not have to be revesible. See F_* classes above for km_impl.'''
 
     def __init__(self, dims_in, F_class=F_fully_connected, F_args={},
                  clamp=5.):
@@ -62,6 +62,7 @@ class rev_multiplicative_layer(nn.Module):
         self.max_s = exp(clamp)
         self.min_s = exp(-clamp)
 
+        # 构建模态仿生层函数
         self.s1 = F_class(self.split_len1, self.split_len2, **F_args)
         self.t1 = F_class(self.split_len1, self.split_len2, **F_args)
         self.s2 = F_class(self.split_len2, self.split_len1, **F_args)
@@ -76,10 +77,12 @@ class rev_multiplicative_layer(nn.Module):
         '''log of the nonlinear function e'''
         return self.clamp * 0.636 * torch.atan(s)
 
+    # 前向传播
     def forward(self, x, rev=False):
         x1, x2 = (x[0].narrow(1, 0, self.split_len1),
                   x[0].narrow(1, self.split_len1, self.split_len2))
 
+        # 是否反向传播
         if not rev:
             y1 = self.e(self.s2(x2)) * x1 + self.t2(x2)
             y2 = self.e(self.s1(y1)) * x2 + self.t1(y1)

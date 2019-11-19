@@ -66,7 +66,7 @@ class F_conv(nn.Module):
         #out = nn.ReLU(out)
         return out
 
-
+# 此网络构建一个由四层全连接层组成的网络结构
 class F_fully_connected(nn.Module):
     '''Fully connected tranformation, not reversible, but used below.'''
 
@@ -80,15 +80,18 @@ class F_fully_connected(nn.Module):
         self.d2 = nn.Dropout(p=dropout)
         self.d2b = nn.Dropout(p=dropout)
 
+        # 构建线性网络结构
         self.fc1 = nn.Linear(size_in, internal_size)
         self.fc2 = nn.Linear(internal_size, internal_size)
         self.fc2b = nn.Linear(internal_size, internal_size)
         self.fc3 = nn.Linear(internal_size, size)
 
+        # 激活函数
         self.nl1 = nn.ReLU()
         self.nl2 = nn.ReLU()
         self.nl2b = nn.ReLU()
 
+        # 构建批标准化模块，解决梯度消失和梯度爆炸问题
         if batch_norm:
             self.bn1 = nn.BatchNorm1d(internal_size)
             self.bn1.weight.data.fill_(1)
@@ -99,6 +102,10 @@ class F_fully_connected(nn.Module):
         self.batch_norm = batch_norm
 
     def forward(self, x):
+        '''
+        前向传播
+
+        '''
         out = self.fc1(x)
         if self.batch_norm:
             out = self.bn1(out)

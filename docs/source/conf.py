@@ -25,11 +25,11 @@ source_parsers = {
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-# - Copy over examples folder to docs/source
+# - Copy over km_impl folder to docs/source
 # This makes it so that nbsphinx properly loads the notebook images
 
-examples_source = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'examples'))
-examples_dest = os.path.abspath(os.path.join(os.path.dirname(__file__), 'examples'))
+examples_source = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'km_impl'))
+examples_dest = os.path.abspath(os.path.join(os.path.dirname(__file__), 'km_impl'))
 
 if os.path.exists(examples_dest):
     shutil.rmtree(examples_dest)
